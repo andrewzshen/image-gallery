@@ -1,0 +1,9 @@
+body {
+    font-family: sans-serif;
+    background: #fafafa;
+    padding: 2rem;
+}
+
+h1, h2 {
+    margin: 1rem 0;
+}
