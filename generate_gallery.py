@@ -1,40 +1,26 @@
 import os
+import glob
+from dominate import document
+from dominate.tags import *
 
-image_directory = "images"
 years = ["2023", "2024", "2025"]
 
-# names of title and header
-title = "Balls"
-header1 = "Pictures"
+doc = document("Balls")
 
-f = open("index.html", "w")
-f.write(
-f'''
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>{title}</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <h1>{header1}</h1>
-'''
-)
+with doc.head:
+    meta(charset="UTF-8")
+    link(rel="stylesheet", href="style.css")
 
-for year in years:
-    f.write(f"<h2>{year}</h2>\n<div class='gallery'>\n")
-    directory_path = os.path.join(image_directory, year)
-    image_count = 0
+with doc:
+    for year in years:
+        h1(year)
+        with div(_class="gallery"):
+            images = glob.glob(f"images/{year}/*.JPG")
+            for image in images:
+                relative_path = os.path.relpath(image, "images")
+                thumbnail = f"thumbnails/{relative_path}"
+                with a(href=image, target="_blank"):
+                    img(src=thumbnail, alt="", loading="lazy")
 
-    for image in sorted(os.listdir(directory_path)):
-        if image.lower().endswith((".jpg", ".jpeg")):
-            image_path = os.path.join(directory_path, image)
-            image_path.replace("\\", "/")
-            f.write(f"<img src='{image_path}' alt=''>\n")
-        image_count += 1
-    
-    f.write("</div>\n")
-    print(f"{year} image count: {image_count}")
-
-f.write("</body>\n</html>")
+with open("index.html", "w") as f:
+    f.write(doc.render())
