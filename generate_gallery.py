@@ -1,10 +1,13 @@
 # file: generate_gallery.py
 # A script that generates the index.html file of the image gallery
 
+# third party
 import argparse
 import os
-import glob
 from dominate.tags import *
+
+# my stuff
+from config import *
 
 def generate_anchor(image, thumbnail):
     anchor = a(href=image, target="_blank")
@@ -24,18 +27,29 @@ def generate_gallery(image_dir, thumb_dir):
 
     return _div
 
-def main():
-    # parse args
+def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-p", "--paths",
-        action="append", 
-        nargs=3,
-        metavar=("IMAGE_DIR", "THUMB_DIR", "DIV_TITLE"),
-        required=True,
-        help="Image and thumbnail directories, followed by the title of the gallery; repeatable."
+        "-i", "--image-dir",
+        action="append",
+        nargs=1,
+        metavar=("IMAGE_DIR"),
+        required=False,
+        help="Path of image directory."
     )
-    args = parser.parse_args()
+    parser.add_argument(
+        "-t", "--thumb-dir",
+        action="append",
+        nargs=1,
+        metavar=("THUMB_DIR"),
+        required=True,
+        help="Path of thumbnail directory."
+    )
+    return parser.parse_args()
+
+def main():
+    # parse args
+    args = parse_args()
 
     # main html document
     _html = html()
@@ -48,6 +62,9 @@ def main():
 
     # body
     _body = _html.add(body())
+
+    image_dir = args.image_dir
+    thumb_dir = args.thumb_dir
 
     for image_dir, thumb_dir, div_title in args.paths:
         _body.add(h2(div_title))
