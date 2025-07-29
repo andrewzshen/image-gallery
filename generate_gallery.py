@@ -5,8 +5,7 @@
 import os
 import argparse
 import sys
-from collections import defaultdict
-from dominate.tags import *
+import dominate
 
 def is_image_file(f, exts=[".jpg", ".jpeg"]):
     return os.path.splitext(f)[1].lower() in exts
@@ -30,30 +29,30 @@ def generate_album_map(source):
 
 def generate_div(images):
     # this function assumes that the iamge and its respective thumbnail have the same name
-    _div = div(_class="album")
+    album_div = dominate.div(_class="album")
 
     for image in images:
-        _div.add(img(src=image, alt="", loading="lazy"))
+        album_div.add(dominate.img(src=image, alt="", loading="lazy"))
 
-    return _div
+    return album_div
 
 def generate_html(album_map):
-    _html = html()
+    html = dominate.html()
 
     # header
-    _header = _html.add(header())
-    _header.add(title("Balls"))
-    _header.add(meta(charset="UTF-8"))
+    header = html.add(dominate.header())
+    header.add(dominate.title("Balls"))
+    header.add(dominate.meta(charset="UTF-8"))
     # _header.add(link(rel="stylesheet", href="style.css"))
 
     # body
-    _body = _html.add(body())
+    _body = html.add(dominate.body())
 
     for album_name, images in album_map.items():
-        _body.add(h1(album_name))
+        _body.add(dominate.h1(album_name))
         _body.add(generate_div(images))
 
-    return _html
+    return html
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -68,13 +67,13 @@ def main():
     source = args.source
     destination = args.destination
     force = args.force
+    
+    # generate the destination directory if it does not exist
+    if not os.path.exists(destination):
+        os.makedirs(destination, exist_ok=True)
 
     index_file = os.path.join(destination, "index.html")
     # print(f"Index.html file: {index_file}")
-    
-    # generate the destination file if it does not exist
-    if not os.path.exists(destination):
-        os.makedirs(destination, exist_ok=True)
         
     # check if there already is an index.html file
     if os.path.exists(index_file) and not force:
