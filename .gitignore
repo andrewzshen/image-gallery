@@ -1,4 +1,3 @@
 .venv/
 
-images/
-thumbnails/
+__pycache__/
