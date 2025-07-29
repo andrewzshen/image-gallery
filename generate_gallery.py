@@ -46,11 +46,11 @@ def generate_html(album_map):
     # _header.add(link(rel="stylesheet", href="style.css"))
 
     # body
-    _body = html.add(dominate.body())
+    body = html.add(dominate.body())
 
     for album_name, images in album_map.items():
-        _body.add(dominate.h1(album_name))
-        _body.add(generate_div(images))
+        body.add(dominate.h1(album_name))
+        body.add(generate_div(images))
 
     return html
 
