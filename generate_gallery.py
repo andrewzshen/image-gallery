@@ -85,12 +85,12 @@ def main():
     album_map = generate_album_map(source)
 
     # main html document
-    _html = generate_html(album_map)
-    print(_html.render())
+    html = generate_html(album_map)
+    print(html.render())
 
     # write the contents to the file
     with open(index_file, "w") as f:
-        f.write(_html.render())
+        f.write(html.render())
 
 if __name__ == "__main__":
     main()
