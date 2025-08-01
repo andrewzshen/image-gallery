@@ -1,11 +1,14 @@
 # file: generate_gallery.py
 # A script that generates the index.html file of the image gallery
 
-# third party
 import os
 import argparse
+import base64
 import sys
 import dominate
+
+def encode_image(image):
+    return base64.urlsafe_b64encode(image.encode()).decode() + ".jpg"
 
 def is_image_file(f, exts=[".jpg", ".jpeg"]):
     return os.path.splitext(f)[1].lower() in exts
@@ -32,7 +35,9 @@ def generate_div(images):
     album_div = dominate.tags.div(_class="album")
 
     for image in images:
-        album_div.add(dominate.tags.img(src=image, alt="", loading="lazy"))
+        encoded_image = encode_image(image)
+        a = album_div.add(dominate.tags.a(href=encoded_image, _blank=""))
+        a.add(dominate.tags.img(src=image, alt="", loading="lazy"))
 
     return album_div
 
