@@ -29,27 +29,27 @@ def generate_album_map(source):
 
 def generate_div(images):
     # this function assumes that the iamge and its respective thumbnail have the same name
-    album_div = dominate.div(_class="album")
+    album_div = dominate.tags.div(_class="album")
 
     for image in images:
-        album_div.add(dominate.img(src=image, alt="", loading="lazy"))
+        album_div.add(dominate.tags.img(src=image, alt="", loading="lazy"))
 
     return album_div
 
 def generate_html(album_map):
-    html = dominate.html()
+    html = dominate.tags.html()
 
     # header
-    header = html.add(dominate.header())
-    header.add(dominate.title("Balls"))
-    header.add(dominate.meta(charset="UTF-8"))
-    # _header.add(link(rel="stylesheet", href="style.css"))
+    header = html.add(dominate.tags.header())
+    header.add(dominate.tags.title("Balls"))
+    header.add(dominate.tags.meta(charset="UTF-8"))
+    header.add(dominate.tags.link(rel="stylesheet", href="style.css"))
 
     # body
-    body = html.add(dominate.body())
+    body = html.add(dominate.tags.body())
 
     for album_name, images in album_map.items():
-        body.add(dominate.h1(album_name))
+        body.add(dominate.tags.h1(album_name))
         body.add(generate_div(images))
 
     return html
