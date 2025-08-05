@@ -30,8 +30,8 @@ def generate_div(name, images):
     for image_basename in images:
         image = os.path.join(config.IMAGE_DIR_ALIAS, name, image_basename)
         thumbnail = os.path.join(config.THUMB_DIR_ALIAS, name, image_basename)
-        a = div.add(dominate.tags.a(href=thumbnail, _blank=""))
-        a.add(dominate.tags.img(src=image, alt="", loading="lazy"))
+        a = div.add(dominate.tags.a(href=image, target="_blank"))
+        a.add(dominate.tags.img(src=thumbnail, alt="", loading="lazy"))
 
     return div
 
@@ -101,8 +101,8 @@ def main():
     print(html.render())
 
     # write the contents to the file
-    # with open(index_file, "w") as f:
-    #     f.write(html.render())
+    with open(index_file, "w") as f:
+        f.write(html.render())
 
 if __name__ == "__main__":
     main()

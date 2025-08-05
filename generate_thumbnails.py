@@ -18,7 +18,7 @@ def generate_thumbnail(image_path, thumb_size, save_as):
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--source-dir", 
+        "--image-dir", 
         default=config.IMAGE_DIR, 
         help="Directory where the images are stored. Default is specified in config.py."
     )
@@ -39,7 +39,7 @@ def main():
     args = parse_args()
     image_dir = args.image_dir
     thumb_dir = args.thumb_dir
-    thumb_size = args.thumbnail_size
+    thumb_size = args.thumb_size
 
     os.makedirs(thumb_dir, exist_ok=True)
 
