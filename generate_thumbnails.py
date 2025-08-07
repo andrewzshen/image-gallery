@@ -1,5 +1,5 @@
-# file: generate_gallery.py
-# A script that generates the index.html file of the image gallery
+# file: generate_thumbnails.py
+# A script that generates thumbnails for the given images
 
 # third party
 import os
@@ -8,12 +8,12 @@ from PIL import Image
 
 # mine
 import config
-import find_images
+from directory_scanner import *
 
-def generate_thumbnail(image_path, thumb_size, save_as):
+def generate_thumbnail(image_path, thumb_size, thumb_name):
     image = Image.open(image_path)
     image.thumbnail(thumb_size)
-    image.save(save_as)
+    image.save(thumb_name)
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -43,11 +43,12 @@ def main():
 
     os.makedirs(thumb_dir, exist_ok=True)
 
-    for image in find_images.find_images(image_dir):
-        rel_path = os.path.relpath(image, image_dir)
-        save_as = os.path.join(thumb_dir, rel_path)
-        os.makedirs(os.path.dirname(save_as), exist_ok=True)
-        generate_thumbnail(image, thumb_size, save_as)
+    for dir_name, dir_path in find_dirs(image_dir).items():
+        os.makedirs(dir_path, exist_ok=True)
+
+        for image_name, image_path in find_images(dir_path).items():
+            thumb_name = os.path.join(thumb_dir, dir_name, image_name)
+            generate_thumbnail(image_path, thumb_size, thumb_name)
 
 if __name__ == "__main__":
     main()

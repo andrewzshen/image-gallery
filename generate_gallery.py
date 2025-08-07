@@ -9,7 +9,7 @@ import dominate
 
 # mine
 import config
-import find_images
+from directory_scanner import *
 
 def generate_album_map(source):
     album_names = sorted(os.listdir(source))
@@ -18,7 +18,7 @@ def generate_album_map(source):
     
     for album_name in album_names:
         full_album_dir = os.path.join(source, album_name)
-        images = [os.path.basename(image) for image in find_images.find_images(full_album_dir)]
+        images = [os.path.basename(image) for image in find_images(full_album_dir)]
         album_map[album_name] = images
 
     return album_map
