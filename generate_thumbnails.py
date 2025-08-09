@@ -36,6 +36,7 @@ def parse_args():
     parser.add_argument(
         "--thumb-size", 
         default=THUMB_SIZE, 
+        type=int,
         nargs=2, 
         metavar=("WIDTH", "HEIGHT"), 
         help="Size in pixels of the generated thumbnails. Default is specified in config.py."
