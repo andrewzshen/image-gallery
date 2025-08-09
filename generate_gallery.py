@@ -8,34 +8,28 @@ import sys
 import dominate
 
 # mine
-import config
+from config import *
 from directory_scanner import *
 
-def generate_album_map(source):
-    album_names = sorted(os.listdir(source))
+def generate_album_map(image_dir):
+    album_names = sorted(os.listdir(image_dir))
 
     album_map = dict.fromkeys(album_names, [])
     
     for album_name in album_names:
-        full_album_dir = os.path.join(source, album_name)
+        full_album_dir = os.path.join(image_dir, album_name)
         images = [os.path.basename(image) for image in find_images(full_album_dir)]
         album_map[album_name] = images
 
     return album_map
 
-def generate_div(name, images):
-    # this function assumes that the image and its respective thumbnail have the same name
-    div = dominate.tags.div(_class="album")
+def generate_html(source_dir, image_dir, thumb_dir):
+    full_image_dir = os.path.join(os.getenv("HOME"), source_dir, image_dir)
 
-    for image_basename in images:
-        image = os.path.join(config.IMAGE_DIR_ALIAS, name, image_basename)
-        thumbnail = os.path.join(config.THUMB_DIR_ALIAS, name, image_basename)
-        a = div.add(dominate.tags.a(href=image, target="_blank"))
-        a.add(dominate.tags.img(src=thumbnail, alt="", loading="lazy"))
+    # a dict where the album name is the key, and all its images are the values as a list
+    # Ex: { '2023' : [images/2025/DSC05946.JPG, images/2025/DSC06024.JPG, ...] }
+    album_map = generate_album_map(full_image_dir)
 
-    return div
-
-def generate_html(album_map):
     html = dominate.tags.html()
 
     # header
@@ -48,8 +42,19 @@ def generate_html(album_map):
     body = html.add(dominate.tags.body())
 
     for album_name, images in album_map.items():
+        # header
         body.add(dominate.tags.h1(album_name))
-        body.add(generate_div(album_name, images))
+
+        # div
+        div = body.add(dominate.tags.div(_class="album"))
+
+        for image_name in images:
+            image = os.path.join(WEB_DIR_ALIAS, image_dir, album_name, image_name)
+            thumbnail = os.path.join(WEB_DIR_ALIAS, thumb_dir, album_name, image_name)
+            
+            # anchor  
+            anchor = div.add(dominate.tags.a(href=image, target="_blank"))
+            anchor.add(dominate.tags.img(src=thumbnail, alt="", loading="lazy"))
 
     return html
 
@@ -62,14 +67,19 @@ def parse_args():
         help="Override existing index.html if one exists."
     )
     parser.add_argument(
-        "--image-dir", 
-        default=config.IMAGE_DIR, 
-        help="Directory where the images are stored. Default is specified in config.py."
+        "--source-dir", 
+        default=SOURCE_DIR, 
+        help="The source directory of all the images. Assumes it is in the home directory. Default is specified in config.py."
     )
     parser.add_argument(
-        "--output-dir",
-        default=config.OUTPUT_DIR,
-        help="Directory where the final index.html file will end up. Default is specified in config.py."
+        "--image-dir", 
+        default=IMAGE_DIR, 
+        help="The directory in source where the images are stored. Default is specified in config.py."
+    )
+    parser.add_argument(
+        "--thumb-dir", 
+        default=THUMB_DIR, 
+        help="The directory in source where the thumbnails are stored. Default is specified in config.py."
     )
     return parser.parse_args()
 
@@ -77,31 +87,21 @@ def main():
     # parse args
     args = parse_args()
     force = args.force
+    source_dir = args.source_dir
     image_dir = args.image_dir
-    output_dir = args.output_dir
-    
-    # generate the destination directory if it does not exist
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir, exist_ok=True)
-
-    index_file = os.path.join(output_dir, "index.html")
-    # print(f"Index.html file: {index_file}")
+    thumb_dir = args.thumb_dir
         
     # check if there already is an index.html file
-    if os.path.exists(index_file) and not force:
-        print(f"Error: index.html already exists at {output_dir}! Use --force to override it.")
+    if os.path.exists("index.html") and not force:
+        print(f"Error: index.html already exists in currently working directory! Use --force to override it.")
         sys.exit(1)
 
-    # a dict where the album name is the key, and all its images are the values as a list
-    # Ex: { '2023' : [images/2025/DSC05946.JPG, images/2025/DSC06024.JPG, ...] }
-    album_map = generate_album_map(image_dir)
-
     # main html document
-    html = generate_html(album_map)
+    html = generate_html(source_dir, image_dir, thumb_dir)
     print(html.render())
 
     # write the contents to the file
-    with open(index_file, "w") as f:
+    with open("index.html", "w") as f:
         f.write(html.render())
 
 if __name__ == "__main__":
