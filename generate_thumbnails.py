@@ -4,7 +4,7 @@
 # third party
 import os
 import argparse
-from PIL import Image
+from PIL import Image, ImageOps
 
 # mine
 from config import *
@@ -12,6 +12,7 @@ from directory_scanner import *
 
 def generate_thumbnail(image_path, thumb_size, thumb_name):
     image = Image.open(image_path)
+    image = ImageOps.exif_transpose(image)
     image.thumbnail(thumb_size)
     image.save(thumb_name)
 
