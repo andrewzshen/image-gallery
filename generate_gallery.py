@@ -34,7 +34,7 @@ def generate_html(source_dir, image_dir, thumb_dir):
 
     # head
     head = html.add(dominate.tags.head())
-    head.add(dominate.tags.title("Balls"))
+    head.add(dominate.tags.title("Andrew's Balls"))
     head.add(dominate.tags.meta(charset="UTF-8"))
     head.add(dominate.tags.link(rel="stylesheet", href="style.css"))
 
@@ -45,7 +45,7 @@ def generate_html(source_dir, image_dir, thumb_dir):
     tab = body.add(dominate.tags.div(_class="tab"))
 
     for album_name in album_map.keys():
-        tab.add(dominate.tags.button(album_name, _class="tablinks", onclick=f"openTab(event, '{album_name}')"))
+        tab.add(dominate.tags.button(album_name, _class="tablink", onclick=f"openTab(event, '{album_name}')"))
 
     for album_name, images in album_map.items():
         # tab content div
