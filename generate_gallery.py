@@ -32,29 +32,38 @@ def generate_html(source_dir, image_dir, thumb_dir):
 
     html = dominate.tags.html()
 
-    # header
-    header = html.add(dominate.tags.header())
-    header.add(dominate.tags.title("Balls"))
-    header.add(dominate.tags.meta(charset="UTF-8"))
-    header.add(dominate.tags.link(rel="stylesheet", href="style.css"))
+    # head
+    head = html.add(dominate.tags.head())
+    head.add(dominate.tags.title("Andrew's Balls"))
+    head.add(dominate.tags.meta(charset="UTF-8"))
+    head.add(dominate.tags.link(rel="stylesheet", href="style.css"))
 
     # body
     body = html.add(dominate.tags.body())
 
-    for album_name, images in album_map.items():
-        # header
-        body.add(dominate.tags.h1(album_name))
+    # tab links div
+    tab = body.add(dominate.tags.div(_class="tab"))
 
-        # div
-        div = body.add(dominate.tags.div(_class="album"))
+    for album_name in album_map.keys():
+        tab.add(dominate.tags.button(album_name, _class="tablink", onclick=f"openTab(event, '{album_name}')"))
+
+    for album_name, images in album_map.items():
+        # tab content div
+        tab_content = body.add(dominate.tags.div(id=album_name, _class="tabcontent"))
+
+        # header
+        tab_content.add(dominate.tags.h1(album_name))
 
         for image_name in images:
             image = os.path.join(WEB_DIR_ALIAS, image_dir, album_name, image_name)
             thumbnail = os.path.join(WEB_DIR_ALIAS, thumb_dir, album_name, image_name)
             
             # anchor  
-            anchor = div.add(dominate.tags.a(href=image, target="_blank"))
+            anchor = tab_content.add(dominate.tags.a(href=image, target="_blank"))
             anchor.add(dominate.tags.img(src=thumbnail, alt="", loading="lazy"))
+    
+    # script
+    body.add(dominate.tags.script(type="text/javascript", src="tabs.js"))
 
     return html
 
